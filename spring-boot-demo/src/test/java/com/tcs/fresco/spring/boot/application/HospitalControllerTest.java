@@ -1,5 +1,6 @@
 package com.tcs.fresco.spring.boot.application;
 
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,7 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -20,9 +23,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.local.spring.boot.application.Hospital;
+import com.local.spring.boot.application.SpringBoot5Application;
 
-@SpringBootTest
+
+@SpringBootTest(classes=SpringBoot5Application.class)
 @RunWith(SpringRunner.class)
+
 public class HospitalControllerTest {
 	
     
@@ -30,6 +36,8 @@ public class HospitalControllerTest {
     
     @Autowired
     WebApplicationContext context;
+    
+ 
     
    
 
@@ -40,7 +48,17 @@ public class HospitalControllerTest {
     }
 
 
-	
+	@Test
+	public void retrievetest_ok() throws Exception {
+		addhospital_ok();
+		 mockMvc.perform(get("/test/hospitals/1000" )).andDo(print())
+	                .andExpect(status().isOk())
+	                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1000))
+	                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Apollo Hospital"))
+	                .andExpect(MockMvcResultMatchers.jsonPath("$.rating").value(3.8))
+	                .andExpect(MockMvcResultMatchers.jsonPath("$.city").value("Chennai"));
+
+	}
 	
 	
 	@Test
@@ -67,26 +85,6 @@ public class HospitalControllerTest {
 		 			.contentType(MediaType.APPLICATION_JSON)
 		 			.accept(MediaType.APPLICATION_JSON))
 	                .andExpect(status().isOk());          
-	}
-	
-	@Test
-	public void retrievetest_ok() throws Exception {
-		addhospital_ok();
-		 mockMvc.perform(get("/test/hospitals/1000" )).andDo(print())
-	                .andExpect(status().isOk())
-	                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1000))
-	                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Apollo Hospital"))
-	                .andExpect(MockMvcResultMatchers.jsonPath("$.rating").value(3.8))
-	                .andExpect(MockMvcResultMatchers.jsonPath("$.city").value("Chennai"));
-
-	}
-	
-	@Test
-	public void retrievetestAll_ok() throws Exception {
-		addhospital_ok();
-		 mockMvc.perform(get("/test/hospitals/" )).andDo(print())
-	                .andExpect(status().isOk());
-
 	}
 	
 	@Test
